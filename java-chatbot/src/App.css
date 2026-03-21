@@ -475,7 +475,7 @@
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
   gap: 20px;
-  margin-top: 20px;
+  margin-top: 12px;
   min-height: 0;
 }
 
@@ -586,10 +586,10 @@
 }
 
 .thread-title {
-  font-size: clamp(2.1rem, 4vw, 3.4rem);
+  font-size: clamp(1.95rem, 3.7vw, 3.15rem);
   letter-spacing: -0.05em;
   line-height: 0.96;
-  margin: 8px 0;
+  margin: 6px 0;
 }
 
 .message-list {
@@ -623,6 +623,22 @@
   min-width: 260px;
 }
 
+.message-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.message-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .formatted-message {
   display: grid;
   gap: 12px;
@@ -639,7 +655,6 @@
   align-items: center;
   gap: 8px;
   width: fit-content;
-  margin: 6px 0 14px;
   border: 1px solid var(--border);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.04);
@@ -660,6 +675,32 @@
 }
 
 .message-audio.active {
+  background: rgba(77, 131, 255, 0.14);
+  border-color: rgba(77, 131, 255, 0.38);
+  color: var(--heading);
+}
+
+.message-copy {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  padding: 8px 12px;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.message-copy:hover {
+  transform: translateY(-1px);
+  border-color: var(--border-strong);
+  color: var(--heading);
+}
+
+.message-copy.active {
   background: rgba(77, 131, 255, 0.14);
   border-color: rgba(77, 131, 255, 0.38);
   color: var(--heading);

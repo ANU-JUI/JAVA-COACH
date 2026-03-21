@@ -423,6 +423,7 @@ function App() {
   const [typingDots, setTypingDots] = useState('.')
   const [isListening, setIsListening] = useState(false)
   const [activeSpeechMessageId, setActiveSpeechMessageId] = useState(null)
+  const [copiedMessageId, setCopiedMessageId] = useState(null)
 
   const transcriptRef = useRef('')
   const recognitionRef = useRef(null)
@@ -668,6 +669,18 @@ function App() {
     window.speechSynthesis.cancel()
     activeUtteranceRef.current = null
     setActiveSpeechMessageId(null)
+  }
+
+  async function copyMessageContent(messageId, content) {
+    try {
+      await navigator.clipboard.writeText(content)
+      setCopiedMessageId(messageId)
+      window.setTimeout(() => {
+        setCopiedMessageId((current) => (current === messageId ? null : current))
+      }, 1600)
+    } catch {
+      setError('Unable to copy the response.')
+    }
   }
 
   function speakMessage(messageId, content, options = {}) {
@@ -1265,21 +1278,37 @@ function App() {
                   key={message.id}
                   className={message.role === 'user' ? 'message user' : 'message assistant'}
                 >
-                  <span className="message-role">
-                    {message.role === 'user' ? 'You' : 'JavaCoach'}
-                  </span>
-                  {message.role === 'assistant' ? (
-                    <button
-                      type="button"
-                      className={activeSpeechMessageId === message.id ? 'message-audio active' : 'message-audio'}
-                      onClick={() => speakMessage(message.id, message.content)}
-                      title={activeSpeechMessageId === message.id ? 'Stop audio' : 'Play audio'}
-                    >
-                      {activeSpeechMessageId === message.id
-                        ? `${String.fromCodePoint(0x1F50A)} Stop`
-                        : String.fromCodePoint(0x1F50A)}
-                    </button>
-                  ) : null}
+                  <div className="message-head">
+                    <span className="message-role">
+                      {message.role === 'user' ? 'You' : 'JavaCoach'}
+                    </span>
+                    {message.role === 'assistant' ? (
+                      <div className="message-actions">
+                        <button
+                          type="button"
+                          className={
+                            activeSpeechMessageId === message.id
+                              ? 'message-audio active'
+                              : 'message-audio'
+                          }
+                          onClick={() => speakMessage(message.id, message.content)}
+                          title={activeSpeechMessageId === message.id ? 'Stop audio' : 'Play audio'}
+                        >
+                          {activeSpeechMessageId === message.id
+                            ? `${String.fromCodePoint(0x1F50A)} Stop`
+                            : String.fromCodePoint(0x1F50A)}
+                        </button>
+                        <button
+                          type="button"
+                          className={copiedMessageId === message.id ? 'message-copy active' : 'message-copy'}
+                          onClick={() => copyMessageContent(message.id, message.content)}
+                          title="Copy response"
+                        >
+                          {copiedMessageId === message.id ? 'Copied' : 'Copy'}
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
                   <div className="formatted-message">{renderFormattedContent(message.content)}</div>
                 </article>
               ))}
