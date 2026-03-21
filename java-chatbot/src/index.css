@@ -1,0 +1,79 @@
+:root {
+  --bg: #0a0a0b;
+  --surface: #1d1d1f;
+  --surface-2: #252527;
+  --surface-soft: #141416;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #d4d4d8;
+  --heading: #fafafa;
+  --muted: #8b8b92;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  --sans:
+    'Soehne', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --mono: 'Consolas', 'Courier New', monospace;
+
+  font-family: var(--sans);
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.04), transparent 32%),
+    linear-gradient(180deg, #0a0a0b 0%, #0a0a0b 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 100% 48px;
+  opacity: 0.28;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1,
+h2 {
+  color: var(--heading);
+  font-weight: 600;
+}
+
+a {
+  color: inherit;
+}
