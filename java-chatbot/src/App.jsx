@@ -388,31 +388,19 @@ function loadStoredState() {
   }
 
   const rawState = window.localStorage.getItem(STORAGE_KEY)
-  const rawUser = window.localStorage.getItem(USER_KEY)
-  let user = null
-
-  if (rawUser) {
-    try {
-      user = JSON.parse(rawUser)
-    } catch {
-      user = {
-        name: rawUser.split('@')[0] || 'User',
-        email: rawUser,
-      }
-    }
-  }
+  window.localStorage.removeItem(USER_KEY)
 
   if (!rawState) {
-    return { user, sessions: [] }
+    return { user: null, sessions: [] }
   }
 
   try {
     return {
-      user,
+      user: null,
       sessions: JSON.parse(rawState).sessions || [],
     }
   } catch {
-    return { user, sessions: [] }
+    return { user: null, sessions: [] }
   }
 }
 
@@ -907,7 +895,6 @@ function App() {
       email: trimmedEmail,
     }
 
-    window.localStorage.setItem(USER_KEY, JSON.stringify(nextUser))
     setUser(nextUser)
     setTemporaryMode(false)
     setLoginError('')
@@ -1024,7 +1011,7 @@ function App() {
               </span>
             </div>
 
-            <h1 className="home-title">Practice Java .<p>Fix bugs .</p>Crack interviews .</h1>
+            <h1 className="home-title">Practice Java .<p>Fix Bugs .</p>Crack Interviews .</h1>
             <p className="home-subtitle">
               Start with a question, a code snippet, a stack trace, or a mock interview round.
             </p>
