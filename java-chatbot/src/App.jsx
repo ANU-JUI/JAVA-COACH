@@ -1024,7 +1024,7 @@ function App() {
               </span>
             </div>
 
-            <h1 className="home-title">Practice Java .<p>Fix Bugs .</p>Crack Interviews .</h1>
+            <h1 className="home-title">Practice Java.<p>Fix Bugs.</p>Crack Interviews.</h1>
             <p className="home-subtitle">
               Start with a question, a code snippet, a stack trace, or a mock interview round.
             </p>
