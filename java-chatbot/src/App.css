@@ -1267,7 +1267,8 @@
   }
 
   .topbar-right {
-    display: none;
+    display: flex;
+    margin-left: 0;
   }
 
   .topbar-menu-button {
@@ -1284,6 +1285,10 @@
   }
 
   .topbar-profile {
+    display: none;
+  }
+
+  .topbar-actions {
     display: none;
   }
 
