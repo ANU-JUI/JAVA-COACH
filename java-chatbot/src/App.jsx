@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
+// API configuration used by the frontend chat request.
 const apiConfig = {
   endpoint:
     import.meta.env.VITE_RAPIDAPI_ENDPOINT ||
@@ -12,6 +13,7 @@ const apiConfig = {
 const STORAGE_KEY = 'javaai-chat-state-v4'
 const USER_KEY = 'user'
 
+// Chat modes reused across the landing page, sidebar, and composer placeholders.
 const modes = [
   {
     id: 'java-assistant',
@@ -41,6 +43,7 @@ const interviewTracks = [
   'Multithreading',
 ]
 
+// Landing page labels, cards, and reusable prompt chips.
 const homeTags = [
   'Java only',
   'Voice input',
@@ -90,6 +93,7 @@ const textFileExtensions = new Set([
   'log',
 ])
 
+// Default assistant opener for each mode when a session is created.
 const starterMessages = {
   'java-assistant': [
     {
@@ -148,6 +152,7 @@ function getSystemPrompt(mode, interviewTrack) {
   return [...baseRules, 'Operate as a Java mentor and explainer.'].join(' ')
 }
 
+// Standard message shape stored in session history.
 function createMessage(role, content) {
   return {
     id: `${role}-${crypto.randomUUID()}`,
@@ -156,6 +161,7 @@ function createMessage(role, content) {
   }
 }
 
+// Creates a new session shell before the user asks anything.
 function createSession(mode) {
   return {
     id: crypto.randomUUID(),
@@ -168,6 +174,7 @@ function createSession(mode) {
   }
 }
 
+// Creates a session that already contains the first user prompt.
 function createSessionWithPrompt(mode, prompt) {
   const session = createSession(mode)
   const content = prompt.trim()
@@ -183,6 +190,7 @@ function createSessionWithPrompt(mode, prompt) {
   }
 }
 
+// Saved history only includes sessions where the user asked at least one question.
 function hasUserMessages(session) {
   return session.messages.some((message) => message.role === 'user')
 }
@@ -248,6 +256,7 @@ async function summarizeUploadedFile(file) {
   }
 }
 
+// Normalizes different API response formats into one assistant text reply.
 function extractAssistantReply(payload) {
   if (typeof payload === 'string') {
     return payload.trim()
@@ -382,6 +391,7 @@ function renderFormattedContent(content) {
   return blocks
 }
 
+// Restores saved session history, but intentionally starts the app logged out on refresh.
 function loadStoredState() {
   if (typeof window === 'undefined') {
     return { user: null, sessions: [] }
@@ -406,6 +416,7 @@ function loadStoredState() {
 
 function App() {
   const storedState = loadStoredState()
+  // Core UI/session state for navigation, auth, chat flow, and responsive menus.
   const [uiState, setUiState] = useState('home')
   const [user, setUser] = useState(storedState.user || null)
   const [temporaryMode, setTemporaryMode] = useState(!storedState.user)
@@ -437,6 +448,7 @@ function App() {
   const temporarySessionRef = useRef(temporarySession)
   const savedSessionsRef = useRef(savedSessions)
 
+  // Derive the currently visible session and active mode details from stored state.
   const activeSession =
     temporaryMode || !user
       ? temporarySession
@@ -457,6 +469,7 @@ function App() {
     typeof window !== 'undefined' && 'speechSynthesis' in window
   const interviewVoiceMode = activeMode === 'interview'
 
+  // Persist saved sessions for logged-in users.
   useEffect(() => {
     if (!user) {
       return
@@ -465,6 +478,7 @@ function App() {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ sessions: savedSessions }))
   }, [user, savedSessions])
 
+  // Keep refs fresh so async reply handlers always target the latest session state.
   useEffect(() => {
     temporarySessionRef.current = temporarySession
   }, [temporarySession])
@@ -473,6 +487,7 @@ function App() {
     savedSessionsRef.current = savedSessions
   }, [savedSessions])
 
+  // Close the responsive menus when the user switches between home and chat screens.
   useEffect(() => {
     setIsTopbarMenuOpen(false)
   }, [uiState])
@@ -580,6 +595,7 @@ function App() {
     setShowLoginModal(false)
   }
 
+  // Decides whether a session stays temporary or moves into saved history.
   function commitSession(session) {
     if (temporaryMode || !user) {
       setTemporarySession(session)
@@ -606,6 +622,7 @@ function App() {
     setActiveSessionId(session.id)
   }
 
+  // Creates a new chat and navigates from the landing page into the chat surface.
   function beginSession(mode = 'java-assistant', prompt = '') {
     const session = createSessionWithPrompt(mode, prompt)
     commitSession(session)
@@ -615,6 +632,7 @@ function App() {
     return session
   }
 
+  // Updates a specific session safely, including async API reply updates.
   function updateSessionById(sessionId, updater) {
     if (!sessionId) {
       return
@@ -649,6 +667,7 @@ function App() {
     updateSessionById(activeSession.id, updater)
   }
 
+  // Reads browser-selected files and stores compact summaries as prompt context.
   async function handleFileSelect(event) {
     const selectedFiles = Array.from(event.target.files || [])
     if (!selectedFiles.length) {
@@ -681,6 +700,7 @@ function App() {
     setActiveSpeechMessageId(null)
   }
 
+  // Copies assistant text so the user can reuse code or explanations quickly.
   async function copyMessageContent(messageId, content) {
     try {
       await navigator.clipboard.writeText(content)
@@ -727,6 +747,7 @@ function App() {
     window.speechSynthesis.speak(utterance)
   }
 
+  // Main request flow: build prompt context, update session state, call the API, and append the reply.
   async function sendMessage(prefilledText, modeOverride = 'java-assistant') {
     const content = (prefilledText ?? draft).trim()
     if (!content || isSending) {
@@ -957,6 +978,7 @@ function App() {
 
   return (
     <main className="app-shell">
+      {/* Hidden browser file picker triggered from the landing/chat upload buttons. */}
       <input
         ref={fileInputRef}
         type="file"
@@ -967,6 +989,7 @@ function App() {
       />
 
       <header className="topbar">
+        {/* Global header with branding, back navigation, profile chip, and responsive actions. */}
         <div className="topbar-brand-group">
           {uiState === 'chat' ? (
             <button type="button" className="chat-back-button" onClick={resetToStarterPage}>
@@ -1005,6 +1028,10 @@ function App() {
           </button>
           {user ? (
             <>
+              <div className="profile-chip topbar-profile-mobile">
+                <span className="profile-fallback">{user.name.slice(0, 1).toUpperCase()}</span>
+                <span>{user.name}</span>
+              </div>
               <button type="button" className="ghost-button" onClick={handleLogout}>
                 Logout
               </button>
@@ -1034,6 +1061,7 @@ function App() {
 
       {uiState === 'home' ? (
         <section className="home-screen">
+          {/* Landing page content: hero, composer, quick actions, cards, and recent sessions. */}
           <div className="hero-orb" aria-hidden="true"></div>
 
           <div className="home-content">
@@ -1192,6 +1220,7 @@ function App() {
         </section>
       ) : (
         <section className="chat-layout">
+          {/* Chat layout: responsive workspace drawer plus the conversation surface. */}
           <button
             type="button"
             className={isSidebarMenuOpen ? 'sidebar-menu-button active' : 'sidebar-menu-button'}
@@ -1203,6 +1232,7 @@ function App() {
           </button>
 
           <aside className={isSidebarMenuOpen ? 'chat-sidebar open' : 'chat-sidebar'}>
+            {/* Workspace sidebar: sessions, mode switching, and interview track controls. */}
             <div className="sidebar-block">
               <p className="section-label">
                 {temporaryMode || !user ? 'Temporary session' : 'Saved sessions'}
@@ -1299,6 +1329,7 @@ function App() {
           </aside>
 
           <section className="chat-surface">
+            {/* Main chat surface: session title, conversation messages, and composer. */}
             <div className="thread-header">
               <div className="thread-header-main">
                 <div>

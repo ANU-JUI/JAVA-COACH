@@ -39,6 +39,10 @@
   flex: 0 1 auto;
 }
 
+.profile-chip.topbar-profile-mobile {
+  display: none;
+}
+
 .brand {
   border: 0;
   background: transparent;
@@ -1166,7 +1170,7 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 810px) {
   .app-shell {
     padding: 16px;
   }
@@ -1192,6 +1196,7 @@
 
   .topbar-right {
     gap: 10px;
+    margin-left: 0;
   }
 
   .topbar-profile .profile-chip {
@@ -1207,6 +1212,7 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+    margin-left: auto;
   }
 
   .topbar-actions {
@@ -1252,5 +1258,36 @@
     width: 100%;
     border-radius: 18px;
     height: 48px;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar {
+    padding-right: 52px;
+  }
+
+  .topbar-right {
+    display: none;
+  }
+
+  .topbar-menu-button {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-left: 0;
+    transform: translateY(-50%);
+  }
+
+  .topbar-menu-button:hover,
+  .topbar-menu-button.active {
+    transform: translateY(calc(-50% - 1px));
+  }
+
+  .topbar-profile {
+    display: none;
+  }
+
+  .topbar-actions.open .profile-chip.topbar-profile-mobile {
+    display: inline-flex;
   }
 }
