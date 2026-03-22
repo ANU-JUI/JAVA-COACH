@@ -1180,7 +1180,7 @@
   }
 
   .home-title {
-    margin-top: 1.2rem;
+    margin-top: calc(1.2rem + 50px);
   }
 
   .home-subtitle {
