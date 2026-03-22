@@ -1129,6 +1129,14 @@
 }
 
 @media (max-width: 1100px) {
+  .home-screen {
+    align-items: start;
+  }
+
+  .home-content {
+    padding: 1.5rem 0 3rem;
+  }
+
   .home-card-grid,
   .home-prompt-grid,
   .recent-row {
