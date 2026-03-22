@@ -424,6 +424,8 @@ function App() {
   const [isListening, setIsListening] = useState(false)
   const [activeSpeechMessageId, setActiveSpeechMessageId] = useState(null)
   const [copiedMessageId, setCopiedMessageId] = useState(null)
+  const [isTopbarMenuOpen, setIsTopbarMenuOpen] = useState(false)
+  const [isSidebarMenuOpen, setIsSidebarMenuOpen] = useState(false)
 
   const transcriptRef = useRef('')
   const recognitionRef = useRef(null)
@@ -470,6 +472,14 @@ function App() {
   useEffect(() => {
     savedSessionsRef.current = savedSessions
   }, [savedSessions])
+
+  useEffect(() => {
+    setIsTopbarMenuOpen(false)
+  }, [uiState])
+
+  useEffect(() => {
+    setIsSidebarMenuOpen(false)
+  }, [uiState, activeSessionId])
 
   useEffect(() => {
     if (!speechSupported) {
@@ -964,20 +974,37 @@ function App() {
             </button>
           ) : null}
           <button type="button" className="brand" onClick={resetToStarterPage}>
+            <img src="/icon.png" alt="Java.Coach" height="40" width="40" /><span> </span>
             Java.Coach
           </button>
         </div>
 
-        <div className="topbar-actions">
+        <button
+          type="button"
+          className={isTopbarMenuOpen ? 'topbar-menu-button active' : 'topbar-menu-button'}
+          onClick={() => setIsTopbarMenuOpen((current) => !current)}
+          aria-label="Toggle top navigation"
+          aria-expanded={isTopbarMenuOpen}
+        >
+          {isTopbarMenuOpen ? '×' : '☰'}
+        </button>
+
+        <div className="topbar-right">
+          {user ? (
+            <div className="topbar-profile">
+              <div className="profile-chip">
+                <span className="profile-fallback">{user.name.slice(0, 1).toUpperCase()}</span>
+                <span>{user.name}</span>
+              </div>
+            </div>
+          ) : null}
+
+          <div className={isTopbarMenuOpen ? 'topbar-actions open' : 'topbar-actions'}>
           <button type="button" className="ghost-button" onClick={toggleTemporaryMode}>
             {temporaryMode ? 'Temporary mode on' : 'Temporary mode off'}
           </button>
           {user ? (
             <>
-              <div className="profile-chip">
-                <span className="profile-fallback">{user.name.slice(0, 1).toUpperCase()}</span>
-                <span>{user.name}</span>
-              </div>
               <button type="button" className="ghost-button" onClick={handleLogout}>
                 Logout
               </button>
@@ -1001,6 +1028,7 @@ function App() {
           >
             New Chat
           </button>
+          </div>
         </div>
       </header>
 
@@ -1164,7 +1192,17 @@ function App() {
         </section>
       ) : (
         <section className="chat-layout">
-          <aside className="chat-sidebar">
+          <button
+            type="button"
+            className={isSidebarMenuOpen ? 'sidebar-menu-button active' : 'sidebar-menu-button'}
+            onClick={() => setIsSidebarMenuOpen((current) => !current)}
+            aria-label="Toggle sessions and modes"
+            aria-expanded={isSidebarMenuOpen}
+          >
+            {isSidebarMenuOpen ? 'Hide workspace' : 'Workspace'}
+          </button>
+
+          <aside className={isSidebarMenuOpen ? 'chat-sidebar open' : 'chat-sidebar'}>
             <div className="sidebar-block">
               <p className="section-label">
                 {temporaryMode || !user ? 'Temporary session' : 'Saved sessions'}
